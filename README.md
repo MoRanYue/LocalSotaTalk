@@ -28,7 +28,7 @@ It has currently supported these frameworks:
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/LocalSotaTalk.git
+git clone https://github.com/MoRanYue/LocalSotaTalk.git
 cd LocalSotaTalk
 ```
 
@@ -354,9 +354,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/LocalSotaTalk/issues)
-<!-- - **Documentation**: [GitHub Wiki](https://github.com/yourusername/LocalSotaTalk/wiki) -->
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/LocalSotaTalk/discussions)
+- **Issues**: [GitHub Issues](https://github.com/MoRanYue/LocalSotaTalk/issues)
+<!-- - **Documentation**: [GitHub Wiki](https://github.com/MoRanYue/LocalSotaTalk/wiki) -->
+- **Discussions**: [GitHub Discussions](https://github.com/MoRanYue/LocalSotaTalk/discussions)
 
 ---
 
