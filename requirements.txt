@@ -1,0 +1,39 @@
+# TTS Backend Service Requirements
+# Updated based on uv pip freeze output
+
+# FastAPI framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+python-multipart==0.0.9
+
+# PyTorch ecosystem
+torch==2.11.0
+torchaudio==2.11.0
+torchcodec==0.11.0
+
+# Transformers and model loading
+transformers==5.3.0
+accelerate==1.13.0
+safetensors==0.7.0
+
+# Audio processing
+soundfile==0.12.1
+librosa==0.10.1
+numpy==2.2.6
+pydub==0.25.1
+
+# UI and visualization
+gradio==4.24.0
+tensorboardX==2.6.2
+
+# Data processing
+webdataset==0.2.86
+einops==0.8.0
+
+# Other utilities
+python-dotenv==1.0.0
+aiofiles==23.2.1
+pydantic-settings==2.1.0
+loguru==0.7.2
+typing-extensions==4.15.0

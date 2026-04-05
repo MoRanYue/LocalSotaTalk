@@ -1,0 +1,6 @@
+[submodule "systems/LongCat-AudioDiT"]
+	path = systems/LongCat-AudioDiT
+	url = https://github.com/meituan-longcat/LongCat-AudioDiT
+[submodule "systems/OmniVoice"]
+	path = systems/OmniVoice
+	url = https://github.com/k2-fsa/OmniVoice

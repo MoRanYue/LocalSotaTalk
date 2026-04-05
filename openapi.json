@@ -1,0 +1,608 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "FastAPI",
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/speakers_list": {
+            "get": {
+                "summary": "Get Speakers",
+                "operationId": "get_speakers_speakers_list_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/speakers": {
+            "get": {
+                "summary": "Get Speakers",
+                "operationId": "get_speakers_speakers_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/languages": {
+            "get": {
+                "summary": "Get Languages",
+                "operationId": "get_languages_languages_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/get_folders": {
+            "get": {
+                "summary": "Get Folders",
+                "operationId": "get_folders_get_folders_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/get_models_list": {
+            "get": {
+                "summary": "Get Models List",
+                "operationId": "get_models_list_get_models_list_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/get_tts_settings": {
+            "get": {
+                "summary": "Get Tts Settings",
+                "operationId": "get_tts_settings_get_tts_settings_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/sample/{file_name}": {
+            "get": {
+                "summary": "Get Sample",
+                "operationId": "get_sample_sample__file_name__get",
+                "parameters": [
+                    {
+                        "name": "file_name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "File Name"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/set_output": {
+            "post": {
+                "summary": "Set Output",
+                "operationId": "set_output_set_output_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OutputFolderRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/set_speaker_folder": {
+            "post": {
+                "summary": "Set Speaker Folder",
+                "operationId": "set_speaker_folder_set_speaker_folder_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SpeakerFolderRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/switch_model": {
+            "post": {
+                "summary": "Switch Model",
+                "operationId": "switch_model_switch_model_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ModelNameRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/set_tts_settings": {
+            "post": {
+                "summary": "Set Tts Settings Endpoint",
+                "operationId": "set_tts_settings_endpoint_set_tts_settings_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TTSSettingsRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tts_stream": {
+            "get": {
+                "summary": "Tts Stream",
+                "operationId": "tts_stream_tts_stream_get",
+                "parameters": [
+                    {
+                        "name": "text",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Text"
+                        }
+                    },
+                    {
+                        "name": "speaker_wav",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Speaker Wav"
+                        }
+                    },
+                    {
+                        "name": "language",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Language"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tts_to_audio/": {
+            "post": {
+                "summary": "Tts To Audio",
+                "operationId": "tts_to_audio_tts_to_audio__post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SynthesisRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tts_to_file": {
+            "post": {
+                "summary": "Tts To File",
+                "operationId": "tts_to_file_tts_to_file_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SynthesisFileRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "ModelNameRequest": {
+                "properties": {
+                    "model_name": {
+                        "type": "string",
+                        "title": "Model Name"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "model_name"
+                ],
+                "title": "ModelNameRequest"
+            },
+            "OutputFolderRequest": {
+                "properties": {
+                    "output_folder": {
+                        "type": "string",
+                        "title": "Output Folder"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "output_folder"
+                ],
+                "title": "OutputFolderRequest"
+            },
+            "SpeakerFolderRequest": {
+                "properties": {
+                    "speaker_folder": {
+                        "type": "string",
+                        "title": "Speaker Folder"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "speaker_folder"
+                ],
+                "title": "SpeakerFolderRequest"
+            },
+            "SynthesisFileRequest": {
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "title": "Text"
+                    },
+                    "speaker_wav": {
+                        "type": "string",
+                        "title": "Speaker Wav"
+                    },
+                    "language": {
+                        "type": "string",
+                        "title": "Language"
+                    },
+                    "file_name_or_path": {
+                        "type": "string",
+                        "title": "File Name Or Path"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "text",
+                    "speaker_wav",
+                    "language",
+                    "file_name_or_path"
+                ],
+                "title": "SynthesisFileRequest"
+            },
+            "SynthesisRequest": {
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "title": "Text"
+                    },
+                    "speaker_wav": {
+                        "type": "string",
+                        "title": "Speaker Wav"
+                    },
+                    "language": {
+                        "type": "string",
+                        "title": "Language"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "text",
+                    "speaker_wav",
+                    "language"
+                ],
+                "title": "SynthesisRequest"
+            },
+            "TTSSettingsRequest": {
+                "properties": {
+                    "stream_chunk_size": {
+                        "type": "integer",
+                        "title": "Stream Chunk Size"
+                    },
+                    "temperature": {
+                        "type": "number",
+                        "title": "Temperature"
+                    },
+                    "speed": {
+                        "type": "number",
+                        "title": "Speed"
+                    },
+                    "length_penalty": {
+                        "type": "number",
+                        "title": "Length Penalty"
+                    },
+                    "repetition_penalty": {
+                        "type": "number",
+                        "title": "Repetition Penalty"
+                    },
+                    "top_p": {
+                        "type": "number",
+                        "title": "Top P"
+                    },
+                    "top_k": {
+                        "type": "integer",
+                        "title": "Top K"
+                    },
+                    "enable_text_splitting": {
+                        "type": "boolean",
+                        "title": "Enable Text Splitting"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "stream_chunk_size",
+                    "temperature",
+                    "speed",
+                    "length_penalty",
+                    "repetition_penalty",
+                    "top_p",
+                    "top_k",
+                    "enable_text_splitting"
+                ],
+                "title": "TTSSettingsRequest"
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    },
+                    "input": {
+                        "title": "Input"
+                    },
+                    "ctx": {
+                        "type": "object",
+                        "title": "Context"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "title": "ValidationError"
+            }
+        }
+    }
+}
