@@ -2,19 +2,19 @@
 # Updated based on uv pip freeze output
 
 # FastAPI framework
-fastapi==0.104.1
+fastapi>=0.115.2
 uvicorn[standard]==0.24.0
 pydantic==2.5.0
-python-multipart==0.0.9
+python-multipart>=0.0.18
 
 # PyTorch ecosystem
-torch==2.11.0
-torchaudio==2.11.0
-torchcodec==0.11.0
+torch>=2.11.0
+torchaudio>=2.11.0
+torchcodec>=0.11.0
 
 # Transformers and model loading
 transformers==5.3.0
-accelerate==1.13.0
+accelerate>=1.13.0
 safetensors==0.7.0
 
 # Audio processing
@@ -24,7 +24,7 @@ numpy==2.2.6
 pydub==0.25.1
 
 # UI and visualization
-gradio==4.24.0
+gradio>=6.11.0
 tensorboardX==2.6.2
 
 # Data processing
