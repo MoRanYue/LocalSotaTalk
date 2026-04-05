@@ -24,6 +24,10 @@ class HTTPValidationError(BaseModel):
 class ModelNameRequest(BaseModel):
     """模型名称请求"""
     model_name: str = Field(..., description="模型名称")
+    
+    model_config = {
+        "protected_namespaces": ()
+    }
 
 
 class OutputFolderRequest(BaseModel):
