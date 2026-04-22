@@ -18,6 +18,7 @@ class BaseTTSAdapter(ABC):
         self.model_repo = model_repo
         self.model = None
         self.is_loaded = False
+        self.sample_rate = 24000  # 默认采样率，子类可以覆盖
     
     @abstractmethod
     def load_model(self):

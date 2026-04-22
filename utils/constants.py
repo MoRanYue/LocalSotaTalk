@@ -105,6 +105,41 @@ LONGCAT_LANGUAGES = {
     "zh": "Chinese",
 }
 
+# VoxCPM支持的语言
+# VoxCPM2支持30种语言，V1.5/0.5B仅支持中英双语
+VOXCPM_LANGUAGES = {
+    "en": "English",
+    "zh": "Chinese",
+    "ar": "Arabic",
+    "da": "Danish",
+    "de": "German",
+    "el": "Greek",
+    "es": "Spanish",
+    "fi": "Finnish",
+    "fr": "French",
+    "he": "Hebrew",
+    "hi": "Hindi",
+    "id": "Indonesian",
+    "it": "Italian",
+    "ja": "Japanese",
+    "km": "Khmer",
+    "ko": "Korean",
+    "lo": "Lao",
+    "ms": "Malay",
+    "my": "Burmese",
+    "nl": "Dutch",
+    "no": "Norwegian",
+    "pl": "Polish",
+    "pt": "Portuguese",
+    "ru": "Russian",
+    "sv": "Swedish",
+    "sw": "Swahili",
+    "th": "Thai",
+    "tl": "Tagalog",
+    "tr": "Turkish",
+    "vi": "Vietnamese",
+}
+
 # 说话人类型
 SPEAKER_TYPES = {
     "audio_only": "仅音频",

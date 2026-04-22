@@ -4,3 +4,6 @@
 [submodule "systems/OmniVoice"]
 	path = systems/OmniVoice
 	url = https://github.com/k2-fsa/OmniVoice
+[submodule "systems/VoxCPM"]
+	path = systems/VoxCPM
+	url = https://github.com/OpenBMB/VoxCPM

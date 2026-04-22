@@ -31,16 +31,18 @@ class TTSModelManager:
             repo: 模型仓库名称
             
         Returns:
-            str: 框架类型 ('omnivoice' 或 'longcat')
+            str: 框架类型 ('omnivoice', 'longcat' 或 'voxcpm')
         """
         repo_lower = repo.lower()
-        if "omnivoice" in repo_lower:
+        if "voxcpm" in repo_lower:
+            return "voxcpm"
+        elif "omnivoice" in repo_lower:
             return "omnivoice"
         elif "longcat" in repo_lower or "audiodit" in repo_lower:
             return "longcat"
         else:
-            # 默认尝试OmniVoice
-            return "omnivoice"
+            # 默认尝试VoxCPM（目前最新/活跃的框架）
+            return "voxcpm"
     
     def load_model(self) -> BaseTTSAdapter:
         """
@@ -57,7 +59,10 @@ class TTSModelManager:
             return self.adapter
         
         try:
-            if self.framework == "omnivoice":
+            if self.framework == "voxcpm":
+                from .voxcpm_adapter import VoxCPMAdapter
+                self.adapter = VoxCPMAdapter(self.model_repo)
+            elif self.framework == "omnivoice":
                 from .omnivoice_adapter import OmniVoiceAdapter
                 self.adapter = OmniVoiceAdapter(self.model_repo)
             elif self.framework == "longcat":

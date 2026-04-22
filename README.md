@@ -4,6 +4,7 @@
 
 It has currently supported these frameworks:
 
+- VoxCPM
 - OmniVoice
 - LongCat-AudioDiT
 
@@ -250,10 +251,12 @@ LocalSotaTalk/
 │   ├── base_adapter.py      # Abstract base class
 │   ├── omnivoice_adapter.py # OmniVoice implementation
 │   ├── longcat_adapter.py   # LongCat-AudioDiT implementation
+│   ├── voxcpm_adapter.py    # VoxCPM implementation
 │   └── manager.py           # Model manager
 ├── utils/            # Utility functions
 ├── systems/          # Framework submodules
 │   ├── OmniVoice/    # OmniVoice framework
+│   ├── VoxCPM/       # VoxCPM framework
 │   └── LongCat-AudioDiT/ # LongCat framework
 ├── samples/          # Speaker samples directory
 ├── output/           # Generated audio files
@@ -262,14 +265,14 @@ LocalSotaTalk/
 
 ### Model Support Matrix
 
-| Feature | OmniVoice | LongCat-AudioDiT |
-|---------|-----------|------------------|
-| Voice Cloning | ✅ | ✅ |
-| Voice Design | ✅ | ❌ |
-| Languages | 600+ | Chinese, English |
-| Reference Audio | Optional | Required |
-| Reference Text | Optional | Recommended |
-| Inference Speed | Fast | Medium |
+| Feature | VoxCPM2 | VoxCPM1.5 | OmniVoice | LongCat-AudioDiT |
+|---------|-----------|------------------|-|-|
+| Voice Cloning | ✅ | ✅ | ✅ | ✅ |
+| Voice Design | ✅ | ❌ | ✅ | ❌ |
+| Languages | 30 + 9 Chinese dialects | Chinese, English | 600+ | Chinese, English |
+| Reference Audio | Optional | Required | Optional | Required |
+| Reference Text | Recommended | Recommended | Optional | Recommended |
+| Inference Speed | Medium | Fast | Fast | Medium |
 
 ## 🔧 Configuration
 
@@ -286,9 +289,12 @@ python main.py --help
 ```
 
 ### Supported Models
-- `k2-fsa/OmniVoice` - Multi-language voice cloning and design
-- `meituan-longcat/LongCat-AudioDiT-1B` - Chinese voice cloning
-- `meituan-longcat/LongCat-AudioDiT-3.5B` - Chinese voice cloning (larger)
+- `openbmb/VoxCPM2` - Multilingual voice cloning and design
+- `openbmb/VoxCPM1.5` - Chinese and English voice cloning (stabler than `openbmb/VoxCPM-0.5B`)
+- `openbmb/VoxCPM-0.5B` - Chinese and English voice cloning
+- `k2-fsa/OmniVoice` - Multilingual voice cloning and design
+- `meituan-longcat/LongCat-AudioDiT-1B` - Chinese and English voice cloning
+- `meituan-longcat/LongCat-AudioDiT-3.5B` - Chinese and English voice cloning (larger)
 
 ## 🐛 Troubleshooting
 
@@ -347,6 +353,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🙏 Acknowledgments
 
+- [VoxCPM](https://github.com/OpenBMB/VoxCPM) by OpenBMB
 - [OmniVoice](https://github.com/k2-fsa/omnivoice) by Xiaomi
 - [LongCat-AudioDiT](https://github.com/meituan-longcat/LongCat-AudioDiT) by Meituan
 - [xtts-api-server](https://github.com/daswer123/xtts-api-server) by daswer123

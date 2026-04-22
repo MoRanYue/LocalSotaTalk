@@ -36,9 +36,13 @@ class AppConfig:
             repo: 模型仓库名称或路径
             
         Returns:
-            str: 框架类型 ("omnivoice" 或 "longcat")
+            str: 框架类型 ("voxcpm", "omnivoice" 或 "longcat")
         """
         repo_lower = repo.lower()
+        
+        # 检查VoxCPM模式
+        if any(keyword in repo_lower for keyword in ["voxcpm", "vox-cpm"]):
+            return "voxcpm"
         
         # 检查LongCat-AudioDiT模式
         if any(keyword in repo_lower for keyword in ["longcat", "audiodit", "meituan"]):
@@ -48,14 +52,14 @@ class AppConfig:
         if any(keyword in repo_lower for keyword in ["omnivoice", "k2-fsa"]):
             return "omnivoice"
         
-        # 默认使用OmniVoice，因为它支持更多语言
-        return "omnivoice"
+        # 默认使用VoxCPM（目前最新/活跃的框架）
+        return "voxcpm"
 
 
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments"""
     parser = argparse.ArgumentParser(
-        description="TTS Backend Service - Supports LongCat-AudioDiT and OmniVoice"
+        description="TTS Backend Service - Supports VoxCPM, LongCat-AudioDiT and OmniVoice"
     )
     
     # Model configuration
@@ -63,7 +67,7 @@ def parse_args() -> argparse.Namespace:
         "--model",
         type=str,
         default="k2-fsa/OmniVoice",
-        help="HuggingFace model repository (e.g., k2-fsa/OmniVoice or meituan-longcat/LongCat-AudioDiT-1B)"
+        help="HuggingFace model repository (e.g., k2-fsa/OmniVoice, meituan-longcat/LongCat-AudioDiT-1B, or a VoxCPM local path)"
     )
     
     # Directory configuration

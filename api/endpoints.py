@@ -52,7 +52,7 @@ class TTSAPI:
         self.model_manager: Optional[TTSModelManager] = None
         self.app = FastAPI(
             title="TTS Backend Service",
-            description="支持LongCat-AudioDiT和OmniVoice的TTS后端服务",
+            description="支持VoxCPM、LongCat-AudioDiT和OmniVoice的TTS后端服务",
             version="0.1.0"
         )
         self._setup_routes()
@@ -151,6 +151,16 @@ class TTSAPI:
         """获取模型列表"""
         # 定义支持的模型
         models = [
+            ModelInfo(
+                name="VoxCPM-1.5B",
+                framework="voxcpm",
+                repo="HKUST-Audio/VoxCPM-1.5B"
+            ),
+            ModelInfo(
+                name="VoxCPM-0.5B",
+                framework="voxcpm",
+                repo="HKUST-Audio/VoxCPM-0.5B"
+            ),
             ModelInfo(
                 name="OmniVoice",
                 framework="omnivoice",
@@ -344,8 +354,22 @@ class TTSAPI:
                            f"Add either '{voice_id}.wav' or '{voice_id}.design.txt' to samples directory."
                 )
             
+            # 获取实际采样率
+            sample_rate = 24000  # 默认值
+            try:
+                # 尝试从管理器获取采样率
+                manager = self.get_model_manager()
+                if hasattr(manager, 'adapter') and manager.adapter is not None:
+                    sample_rate = manager.adapter.sample_rate
+                elif hasattr(manager, 'model') and manager.model is not None:
+                    # 尝试从模型获取
+                    if hasattr(manager.model, 'sample_rate'):
+                        sample_rate = manager.model.sample_rate
+            except Exception as e:
+                logger.warning(f"Failed to get sample rate, using default 24000: {e}")
+            
             # 计算时长
-            duration = len(audio_data) / 24000  # 假设24kHz
+            duration = len(audio_data) / sample_rate
             
             # 将音频数据转换为字节流
             import io
@@ -353,7 +377,7 @@ class TTSAPI:
             
             # 创建内存中的音频文件
             audio_buffer = io.BytesIO()
-            sf.write(audio_buffer, audio_data, 24000, format='WAV')
+            sf.write(audio_buffer, audio_data, sample_rate, format='WAV')
             audio_buffer.seek(0)
             
             # 返回音频流响应
@@ -363,7 +387,7 @@ class TTSAPI:
                 headers={
                     "Content-Disposition": "attachment; filename=tts_output.wav",
                     "Duration": str(duration),
-                    "Sample-Rate": "24000"
+                    "Sample-Rate": str(sample_rate)
                 }
             )
             
@@ -446,17 +470,26 @@ class TTSAPI:
             # 确保目录存在
             file_path.parent.mkdir(parents=True, exist_ok=True)
             
+            # 获取实际采样率
+            sample_rate = 24000  # 默认值
+            try:
+                # 尝试从管理器获取采样率
+                if hasattr(manager, 'adapter') and manager.adapter is not None:
+                    sample_rate = manager.adapter.sample_rate
+            except Exception as e:
+                logger.warning(f"Failed to get sample rate, using default 24000: {e}")
+            
             # 保存音频文件
-            save_audio_file(audio_data, file_path.parent, file_path.name)
+            save_audio_file(audio_data, file_path.parent, file_path.name, sample_rate=sample_rate)
             
             # 计算时长
-            duration = len(audio_data) / 24000
+            duration = len(audio_data) / sample_rate
             
             return SynthesisResponse(
                 audio_data=None,
                 file_path=str(file_path),
                 duration=duration,
-                sample_rate=24000
+                sample_rate=sample_rate
             )
             
         except HTTPException:
@@ -491,7 +524,7 @@ class TTSAPI:
         return {
             "service": "TTS Backend",
             "version": "0.1.0",
-            "frameworks": ["OmniVoice", "LongCat-AudioDiT"],
+            "frameworks": ["VoxCPM", "OmniVoice", "LongCat-AudioDiT"],
             "docs": "/docs",
             "openapi": "/openapi.json"
         }
