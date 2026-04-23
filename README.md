@@ -24,6 +24,13 @@ It has currently supported these frameworks:
 - Python 3.8+
 - NVIDIA GPU with CUDA support (recommended)
 - Git
+- **FFMPEG** (required for torchcodec audio/video processing)
+  - **Windows**: Download from [FFMPEG official site](https://ffmpeg.org/download.html) (**Compressed file must be prefixed with `-full-shared`**) or use Chocolatey: `choco install ffmpeg`
+  - **Linux (Ubuntu/Debian)**: `sudo apt-get install ffmpeg`
+  - **Linux (Fedora)**: `sudo dnf install ffmpeg`
+  - **macOS**: `brew install ffmpeg`
+  - **Conda**: `conda install -c conda-forge ffmpeg`
+  - Verify installation: `ffmpeg -version`
 
 ### Installation
 
