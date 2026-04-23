@@ -1,12 +1,12 @@
-"""LongCat-AudioDiT TTS适配器"""
+"""LongCat-AudioDiT TTS适配器 - 简化版本"""
 import sys
 import os
 import torch
 import numpy as np
 from pathlib import Path
-from typing import Dict, Any, Optional, Tuple
+from typing import Dict, Any, Optional
 import warnings
-import soundfile as sf
+import librosa
 
 from models.base_adapter import BaseTTSAdapter
 from utils.constants import LONGCAT_LANGUAGES, DEFAULT_TTS_SETTINGS
@@ -18,20 +18,18 @@ if LOCAL_LONGCAT_PATH.exists():
 
 
 class LongCatAdapter(BaseTTSAdapter):
-    """LongCat-AudioDiT TTS适配器"""
+    """LongCat-AudioDiT TTS适配器 - 简化版本"""
     
     def __init__(self, model_repo: str):
         super().__init__(model_repo)
         self.generation_config = {}
         self.sample_rate = 24000
         self.tokenizer = None
-        self.vae = None
         
     def load_model(self):
         """加载LongCat-AudioDiT模型"""
         try:
             # 尝试导入LongCat-AudioDiT
-            # 注意：LongCat-AudioDiT使用audiodit模块
             import audiodit
             from audiodit import AudioDiTModel
             from transformers import AutoTokenizer
@@ -58,17 +56,22 @@ class LongCatAdapter(BaseTTSAdapter):
             # 设置为评估模式
             self.model.eval()
             
-            # 设置默认生成配置
+            # 从模型配置获取采样率
+            if hasattr(self.model.config, 'sampling_rate'):
+                self.sample_rate = self.model.config.sampling_rate
+                print(f"Model sampling rate: {self.sample_rate}Hz")
+            else:
+                print(f"Using default sampling rate: {self.sample_rate}Hz")
+            
+            # 设置默认生成配置（使用官方默认参数）
             self.generation_config = {
-                "steps": 16,           # 扩散步骤
-                "cfg_strength": 4.0,   # CFG强度
-                "guidance_method": "cfg",  # 引导方法
-                "temperature": 1.0,
-                "speed": 1.0,
+                "steps": 16,           # 扩散步骤（官方默认：nfe=16）
+                "cfg_strength": 4.0,   # CFG强度（官方默认：guidance_strength=4.0）
+                "guidance_method": "cfg",  # 引导方法（官方默认："cfg"）
             }
             
             self.is_loaded = True
-            print("LongCat-AudioDiT model loaded successfully")
+            print(f"LongCat-AudioDiT model loaded successfully (sample_rate={self.sample_rate}Hz)")
             
         except ImportError as e:
             raise ImportError(
@@ -82,15 +85,15 @@ class LongCatAdapter(BaseTTSAdapter):
         self,
         text: str,
         speaker_wav: Optional[str] = None,
-        language: str = "zh",  # LongCat主要支持中文
+        language: str = "zh",
         **kwargs
     ) -> np.ndarray:
         """
-        合成语音
+        合成语音 - 简化版本
         
         Args:
             text: 要合成的文本
-            speaker_wav: 说话人参考音频路径（必需）
+            speaker_wav: 说话人参考音频路径（语音克隆必需）
             language: 语言代码（zh或en）
             **kwargs: 其他参数
             
@@ -98,9 +101,6 @@ class LongCatAdapter(BaseTTSAdapter):
             np.ndarray: 音频数据
         """
         self.ensure_loaded()
-        
-        if not speaker_wav:
-            raise ValueError("LongCat-AudioDiT requires speaker_wav for voice cloning")
         
         try:
             # 准备生成参数
@@ -110,19 +110,26 @@ class LongCatAdapter(BaseTTSAdapter):
             with torch.no_grad():
                 output = self.model(**gen_kwargs)
             
-            # 提取音频数据
+            # 提取音频数据（根据官方示例）
             if hasattr(output, 'waveform'):
                 audio_tensor = output.waveform
-            elif hasattr(output, 'audio'):
-                audio_tensor = output.audio
             else:
-                raise ValueError("Model output does not contain audio data")
+                # 如果返回元组，取第一个元素
+                audio_tensor = output[0] if isinstance(output, tuple) else output
             
             # 转换为numpy数组
             if isinstance(audio_tensor, torch.Tensor):
-                audio_np = audio_tensor.squeeze().cpu().numpy()
+                audio_np = audio_tensor.cpu().numpy()
             else:
-                audio_np = np.array(audio_tensor).squeeze()
+                audio_np = np.array(audio_tensor)
+            
+            # 确保是单声道1维数组
+            audio_np = audio_np.squeeze()
+            
+            # 简单归一化防止爆音
+            max_val = np.max(np.abs(audio_np))
+            if max_val > 1.0:
+                audio_np = audio_np / max_val
             
             return audio_np
             
@@ -132,150 +139,115 @@ class LongCatAdapter(BaseTTSAdapter):
     def _prepare_generation_kwargs(
         self,
         text: str,
-        speaker_wav: str,
+        speaker_wav: Optional[str],
         language: str,
         **kwargs
     ) -> Dict[str, Any]:
         """
-        准备生成参数
+        准备生成参数 - 简化版本
         
-        Args:
-            text: 合成文本
-            speaker_wav: 说话人音频路径
-            language: 语言代码
-            **kwargs: 其他参数
-            
-        Returns:
-            Dict[str, Any]: 生成参数
+        根据官方README实现：
+        1. 零样本合成：只需要text
+        2. 语音克隆：需要speaker_wav和prompt_text
         """
-        import librosa
+        import torch.nn.functional as F
         
+        # 合并配置
         gen_kwargs = self.generation_config.copy()
         gen_kwargs.update(kwargs)
         
-        # 读取参考音频
-        if not Path(speaker_wav).exists():
-            raise FileNotFoundError(f"Speaker audio file not found: {speaker_wav}")
-        
-        # 加载音频
-        audio, sr = librosa.load(speaker_wav, sr=24000, mono=True)
-        prompt_wav = torch.from_numpy(audio).unsqueeze(0).unsqueeze(0)  # (1, 1, T)
-        
-        # 查找参考文本
-        txt_file = Path(speaker_wav).with_suffix(".txt")
+        # 处理文本
         prompt_text = ""
-        if txt_file.exists():
-            try:
-                with open(txt_file, 'r', encoding='utf-8') as f:
-                    prompt_text = f.read().strip()
-            except Exception:
-                warnings.warn(f"Failed to read text file {txt_file}")
+        full_text = text
         
-        # LongCat需要prompt_text + gen_text拼接
-        if prompt_text:
-            full_text = f"{prompt_text} {text}"
-        else:
-            # 如果没有参考文本，只使用生成文本
-            full_text = text
-            warnings.warn(f"No reference text found for {speaker_wav}, using text-only mode")
+        # 如果有参考音频，尝试读取对应的文本文件
+        if speaker_wav and Path(speaker_wav).exists():
+            txt_file = Path(speaker_wav).with_suffix(".txt")
+            if txt_file.exists():
+                try:
+                    with open(txt_file, 'r', encoding='utf-8') as f:
+                        prompt_text = f.read().strip()
+                except Exception:
+                    pass
+            
+            # LongCat需要prompt_text + gen_text拼接
+            if prompt_text:
+                full_text = f"{prompt_text} {text}"
         
         # Tokenize文本
         inputs = self.tokenizer([full_text], padding="longest", return_tensors="pt")
         
-        # 估计持续时间（简化版本）
-        # 在实际实现中，可能需要更准确的持续时间估计
-        duration = self._estimate_duration(text, language)
-        
-        # 构建生成参数
+        # 构建基础参数
         result = {
             "input_ids": inputs.input_ids.to(self.model.device),
             "attention_mask": inputs.attention_mask.to(self.model.device) if hasattr(inputs, 'attention_mask') else None,
-            "prompt_audio": prompt_wav.to(self.model.device),
-            "duration": duration,
+            "return_dict": True,  # 确保返回AudioDiTOutput对象
         }
         
-        # 添加其他生成参数
+        # 添加参考音频（如果提供）
+        if speaker_wav and Path(speaker_wav).exists():
+            # 加载音频（使用模型采样率）
+            audio, _ = librosa.load(speaker_wav, sr=self.sample_rate, mono=True)
+            prompt_wav = torch.from_numpy(audio).unsqueeze(0).unsqueeze(0)  # (1, 1, T)
+            result["prompt_audio"] = prompt_wav.to(self.model.device)
+        
+        # 估计持续时间（简化版本）
+        # 官方示例：零样本合成使用62帧，语音克隆使用138帧
+        # 这里根据文本长度简单估计
+        duration = self._estimate_duration(text, language, speaker_wav is not None)
+        result["duration"] = duration
+        
+        # 添加生成参数
         result.update({
-            k: v for k, v in gen_kwargs.items()
-            if k in ["steps", "cfg_strength", "guidance_method", "temperature", "speed"]
+            "steps": gen_kwargs.get("steps", 16),
+            "cfg_strength": gen_kwargs.get("cfg_strength", 4.0),
+            "guidance_method": gen_kwargs.get("guidance_method", "cfg"),
         })
         
         return result
     
-    def _estimate_duration(self, text: str, language: str) -> int:
+    def _estimate_duration(self, text: str, language: str, has_prompt: bool) -> int:
         """
-        估计音频持续时间（帧数）
+        估计持续时间（潜在帧数） - 简化版本
         
-        Args:
-            text: 文本
-            language: 语言
-            
-        Returns:
-            int: 估计的帧数
+        这里根据文本长度简单估计
         """
-        # 简化估计：假设每个字符对应一定帧数
-        # LongCat使用24000Hz采样率，hop_size=256
-        hop_size = 256
-        
+        # 根据文本长度调整
+        # 假设每个中文字符约0.3秒，每个英文字符约0.08秒
         if language == "zh":
-            # 中文：每个字符约0.3秒
             chars_per_second = 3.3
         else:
-            # 英文：每个字符约0.08秒
             chars_per_second = 12.5
         
         duration_seconds = len(text) / chars_per_second
-        frames = int(duration_seconds * 24000 / hop_size)
         
-        # 确保最小帧数
-        return max(frames, 10)
+        # 转换为帧数（假设hop_size=256，采样率24000）
+        # 每秒帧数 = 采样率 / hop_size = 24000 / 256 ≈ 93.75
+        frames_per_second = self.sample_rate / 256
+        total_frames = int(duration_seconds * frames_per_second)
+        
+        # 限制范围
+        return max(50, min(total_frames, 300))
     
     def get_supported_languages(self) -> Dict[str, str]:
-        """
-        获取支持的语言列表
-        
-        Returns:
-            Dict[str, str]: 语言代码到语言名称的映射
-        """
+        """获取支持的语言列表"""
         return LONGCAT_LANGUAGES.copy()
     
     def get_tts_settings(self) -> Dict[str, Any]:
-        """
-        获取TTS设置
-        
-        Returns:
-            Dict[str, Any]: TTS设置
-        """
+        """获取TTS设置"""
         settings = DEFAULT_TTS_SETTINGS.copy()
         settings.update(self.generation_config)
         return settings
     
     def update_tts_settings(self, settings: Dict[str, Any]):
-        """
-        更新TTS设置
-        
-        Args:
-            settings: 新的TTS设置
-        """
-        # 更新生成配置
-        valid_keys = ["steps", "cfg_strength", "guidance_method", "temperature", "speed"]
+        """更新TTS设置"""
+        valid_keys = ["steps", "cfg_strength", "guidance_method"]
         for key in valid_keys:
             if key in settings:
                 self.generation_config[key] = settings[key]
-        
-        # 更新其他设置
-        self.generation_config.update({
-            k: v for k, v in settings.items() 
-            if k not in valid_keys
-        })
     
     def get_model_info(self) -> Dict[str, Any]:
-        """
-        获取模型信息
-        
-        Returns:
-            Dict[str, Any]: 模型信息
-        """
+        """获取模型信息"""
         return {
             "framework": "longcat",
             "model_repo": self.model_repo,
@@ -293,15 +265,6 @@ class LongCatAdapter(BaseTTSAdapter):
         """
         通过音频设计描述合成语音
         LongCat-AudioDiT不支持音频设计，抛出异常
-        
-        Args:
-            text: 要合成的文本
-            design_description: 音频设计描述文本
-            language: 语言代码
-            **kwargs: 其他参数
-            
-        Returns:
-            np.ndarray: 音频数据
         """
         raise NotImplementedError(
             "LongCat-AudioDiT does not support instructive synthesis. "
