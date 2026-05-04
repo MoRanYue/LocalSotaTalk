@@ -11,17 +11,19 @@ except ImportError:
 class TTSModelManager:
     """TTS模型管理器，负责加载和管理TTS模型"""
     
-    def __init__(self, model_repo: str):
+    def __init__(self, model_repo: str, device: str = "auto"):
         """
         初始化模型管理器
         
         Args:
             model_repo: HuggingFace模型仓库
+            device: 运行设备 ("cpu", "cuda", 或 "auto")
         """
         self.model_repo = model_repo
         self.framework = self._detect_framework(model_repo)
         self.adapter: Optional[BaseTTSAdapter] = None
         self.current_settings: Dict[str, Any] = {}
+        self.device = device
     
     def _detect_framework(self, repo: str) -> str:
         """
@@ -40,6 +42,8 @@ class TTSModelManager:
             return "omnivoice"
         elif "longcat" in repo_lower or "audiodit" in repo_lower:
             return "longcat"
+        elif ("moss" in repo_lower or "moss-tts" in repo_lower) and "nano" not in repo_lower: # MOSS-TTS-Nano is another arch
+            return "mosstts"
         else:
             # 默认尝试VoxCPM（目前最新/活跃的框架）
             return "voxcpm"
@@ -61,13 +65,16 @@ class TTSModelManager:
         try:
             if self.framework == "voxcpm":
                 from .voxcpm_adapter import VoxCPMAdapter
-                self.adapter = VoxCPMAdapter(self.model_repo)
+                self.adapter = VoxCPMAdapter(self.model_repo, device=self.device)
             elif self.framework == "omnivoice":
                 from .omnivoice_adapter import OmniVoiceAdapter
-                self.adapter = OmniVoiceAdapter(self.model_repo)
+                self.adapter = OmniVoiceAdapter(self.model_repo, device=self.device)
             elif self.framework == "longcat":
                 from .longcat_adapter import LongCatAdapter
-                self.adapter = LongCatAdapter(self.model_repo)
+                self.adapter = LongCatAdapter(self.model_repo, device=self.device)
+            elif self.framework == "mosstts":
+                from .moss_tts_adapter import MossTTSAdapter
+                self.adapter = MossTTSAdapter(self.model_repo, device=self.device)
             else:
                 raise ValueError(f"Unsupported framework: {self.framework}")
             
@@ -293,6 +300,7 @@ class TTSModelManager:
         return {
             "framework": self.framework,
             "model_repo": self.model_repo,
+            "device": self.device,
             "is_loaded": adapter.is_loaded if hasattr(adapter, 'is_loaded') else False
         }
     

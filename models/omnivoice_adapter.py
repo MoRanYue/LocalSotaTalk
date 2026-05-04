@@ -20,8 +20,8 @@ if LOCAL_OMNIVOICE_PATH.exists():
 class OmniVoiceAdapter(BaseTTSAdapter):
     """OmniVoice TTS适配器"""
     
-    def __init__(self, model_repo: str):
-        super().__init__(model_repo)
+    def __init__(self, model_repo: str, device: str = "auto"):
+        super().__init__(model_repo, device=device)
         self.generation_config = {}
         self.sample_rate = 24000
         
@@ -37,8 +37,8 @@ class OmniVoiceAdapter(BaseTTSAdapter):
                 # 回退到直接导入
                 from omnivoice import OmniVoice
             
-            # Set device - always use float32 for compatibility
-            device = "cuda" if torch.cuda.is_available() else "cpu"
+            # Use configured device - always use float32 for compatibility
+            device = self.device
             dtype = torch.float32  # Always use float32 to avoid dtype mismatch
             
             print(f"Loading OmniVoice model from {self.model_repo}...")

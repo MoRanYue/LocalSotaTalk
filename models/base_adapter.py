@@ -5,20 +5,42 @@ import numpy as np
 from pathlib import Path
 
 
+import torch
+
+
 class BaseTTSAdapter(ABC):
     """TTS适配器基类，定义统一接口"""
     
-    def __init__(self, model_repo: str):
+    def __init__(self, model_repo: str, device: str = "auto"):
         """
         初始化适配器
         
         Args:
             model_repo: HuggingFace模型仓库
+            device: 运行设备 ("auto", "cpu" 或 "cuda")
         """
         self.model_repo = model_repo
+        self.device = self._resolve_device(device)
         self.model = None
         self.is_loaded = False
         self.sample_rate = 24000  # 默认采样率，子类可以覆盖
+    
+    @staticmethod
+    def _resolve_device(device: str) -> str:
+        """
+        解析设备参数
+        
+        Args:
+            device: 设备参数 ("auto", "cpu" 或 "cuda")
+            
+        Returns:
+            str: 解析后的设备 ("cpu" 或 "cuda")
+        """
+        if device == "auto":
+            return "cuda" if torch.cuda.is_available() else "cpu"
+        if device not in ("cpu", "cuda"):
+            raise ValueError(f"Unsupported device: {device}. Must be 'auto', 'cpu', or 'cuda'.")
+        return device
     
     @abstractmethod
     def load_model(self):

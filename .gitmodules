@@ -7,3 +7,6 @@
 [submodule "systems/VoxCPM"]
 	path = systems/VoxCPM
 	url = https://github.com/OpenBMB/VoxCPM
+[submodule "systems/MOSS-TTS"]
+	path = systems/MOSS-TTS
+	url = https://github.com/OpenMOSS/MOSS-TTS

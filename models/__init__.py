@@ -4,11 +4,13 @@ from .base_adapter import BaseTTSAdapter
 from .omnivoice_adapter import OmniVoiceAdapter
 from .longcat_adapter import LongCatAdapter
 from .voxcpm_adapter import VoxCPMAdapter
+from .moss_tts_adapter import MossTTSAdapter
 
 __all__ = [
     "TTSModelManager",
     "BaseTTSAdapter",
     "OmniVoiceAdapter",
     "LongCatAdapter",
-    "VoxCPMAdapter"
+    "VoxCPMAdapter",
+    "MossTTSAdapter",
 ]

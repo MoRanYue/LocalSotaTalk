@@ -7,10 +7,11 @@ It has currently supported these frameworks:
 - VoxCPM
 - OmniVoice
 - LongCat-AudioDiT
+- MOSS-TTS
 
 ## ✨ Key Features
 
-- **Multi-Framework Support**: Seamlessly works with OmniVoice (600+ languages) and LongCat-AudioDiT models
+- **Multi-Framework Support**: Seamlessly works with OmniVoice (600+ languages), LongCat-AudioDiT, and MOSS-TTS models
 - **Voice ID System**: Simple speaker management using `voice_id` instead of file paths
 - **Voice Design Support**: OmniVoice supports voice design via textual descriptions
 - **RESTful API**: Simple API, which is compatible with [daswer123/xtts-api-server](https://github.com/daswer123/xtts-api-server)
@@ -77,6 +78,12 @@ python main.py --model k2-fsa/OmniVoice --host 0.0.0.0 --port 8000
 
 # Start with LongCat-AudioDiT
 python main.py --model meituan-longcat/LongCat-AudioDiT-1B --host 0.0.0.0 --port 8000
+
+# Start with MOSS-TTS (any architecture)
+python main.py --model OpenMOSS-Team/MOSS-TTS-Realtime --host 0.0.0.0 --port 8000
+python main.py --model OpenMOSS-Team/MOSS-TTS --host 0.0.0.0 --port 8000
+python main.py --model OpenMOSS-Team/MOSS-TTS-Local-Transformer --host 0.0.0.0 --port 8000
+python main.py --model OpenMOSS-Team/MOSS-VoiceGenerator --host 0.0.0.0 --port 8000
 
 # With custom samples directory
 python main.py --model k2-fsa/OmniVoice --samples-dir ./my_speakers --port 8000
@@ -259,12 +266,14 @@ LocalSotaTalk/
 │   ├── omnivoice_adapter.py # OmniVoice implementation
 │   ├── longcat_adapter.py   # LongCat-AudioDiT implementation
 │   ├── voxcpm_adapter.py    # VoxCPM implementation
+│   ├── moss_tts_adapter.py  # MOSS-TTS implementation
 │   └── manager.py           # Model manager
 ├── utils/            # Utility functions
 ├── systems/          # Framework submodules
 │   ├── OmniVoice/    # OmniVoice framework
 │   ├── VoxCPM/       # VoxCPM framework
-│   └── LongCat-AudioDiT/ # LongCat framework
+│   ├── LongCat-AudioDiT/ # LongCat framework
+│   └── MOSS-TTS/     # MOSS-TTS framework
 ├── samples/          # Speaker samples directory
 ├── output/           # Generated audio files
 └── config.py         # Configuration management
@@ -272,14 +281,15 @@ LocalSotaTalk/
 
 ### Model Support Matrix
 
-| Feature | VoxCPM2 | VoxCPM1.5 | OmniVoice | LongCat-AudioDiT |
-|---------|-----------|------------------|-|-|
-| Voice Cloning | ✅ | ✅ | ✅ | ✅ |
-| Voice Design | ✅ | ❌ | ✅ | ❌ |
-| Languages | 30 + 9 Chinese dialects | Chinese, English | 600+ | Chinese, English |
-| Reference Audio | Optional | Required | Optional | Required |
-| Reference Text | Recommended | Recommended | Optional | Recommended |
-| Inference Speed | Medium | Fast | Fast | Medium |
+| Feature | VoxCPM2 | VoxCPM1.5 | OmniVoice | LongCat-AudioDiT | MOSS-TTS |
+|---------|-----------|------------------|-|-|-|
+| Voice Cloning | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Voice Design | ✅ | ❌ | ✅ | ❌ | ✅ (VoiceGenerator) |
+| Languages | 30 + 9 Chinese dialects | Chinese, English | 600+ | Chinese, English | Multilingual |
+| Reference Audio | Optional | Required | Optional | Required | Optional |
+| Reference Text | Recommended | Recommended | Optional | Recommended | Optional |
+| Inference Speed | Medium | Fast | Fast | Medium | Fast (Realtime) |
+| Architectures | 1 | 1 | 1 | 1 | 3 (Delay/Local/Realtime) |
 
 ## 🔧 Configuration
 
@@ -302,6 +312,10 @@ python main.py --help
 - `k2-fsa/OmniVoice` - Multilingual voice cloning and design
 - `meituan-longcat/LongCat-AudioDiT-1B` - Chinese and English voice cloning
 - `meituan-longcat/LongCat-AudioDiT-3.5B` - Chinese and English voice cloning (larger)
+- `OpenMOSS-Team/MOSS-TTS-Realtime` - Realtime TTS (1.7B, fast inference)
+- `OpenMOSS-Team/MOSS-TTS` - High quality Delay architecture (8B)
+- `OpenMOSS-Team/MOSS-TTS-Local-Transformer` - Local Transformer variant (1.7B)
+- `OpenMOSS-Team/MOSS-VoiceGenerator` - Voice generation with design descriptions
 
 ## 🐛 Troubleshooting
 
@@ -363,6 +377,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [VoxCPM](https://github.com/OpenBMB/VoxCPM) by OpenBMB
 - [OmniVoice](https://github.com/k2-fsa/omnivoice) by Xiaomi
 - [LongCat-AudioDiT](https://github.com/meituan-longcat/LongCat-AudioDiT) by Meituan
+- [MOSS-TTS](https://github.com/OpenMOSS/MOSS-TTS) by Mosi Intelligence / OpenMOSS
 - [xtts-api-server](https://github.com/daswer123/xtts-api-server) by daswer123
 - All contributors and the open-source community
 

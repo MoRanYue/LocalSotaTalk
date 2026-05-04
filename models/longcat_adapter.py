@@ -20,8 +20,8 @@ if LOCAL_LONGCAT_PATH.exists():
 class LongCatAdapter(BaseTTSAdapter):
     """LongCat-AudioDiT TTS适配器 - 简化版本"""
     
-    def __init__(self, model_repo: str):
-        super().__init__(model_repo)
+    def __init__(self, model_repo: str, device: str = "auto"):
+        super().__init__(model_repo, device=device)
         self.generation_config = {}
         self.sample_rate = 24000
         self.tokenizer = None
@@ -34,8 +34,8 @@ class LongCatAdapter(BaseTTSAdapter):
             from audiodit import AudioDiTModel
             from transformers import AutoTokenizer
             
-            # 设置设备
-            device = "cuda" if torch.cuda.is_available() else "cpu"
+            # 使用配置的设备
+            device = self.device
             
             # 加载模型
             print(f"Loading LongCat-AudioDiT model from {self.model_repo}...")

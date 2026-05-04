@@ -28,6 +28,7 @@ def main():
     print("TTS Backend Service Starting")
     print(f"Model: {config.model_repo}")
     print(f"Framework: {config.framework}")
+    print(f"Device: {config.device}")
     print(f"Samples Directory: {config.samples_dir}")
     print(f"Output Directory: {config.output_dir}")
     print(f"Server: {config.host}:{config.port}")

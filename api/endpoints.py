@@ -88,7 +88,7 @@ class TTSAPI:
         """获取或创建模型管理器"""
         if self.model_manager is None:
             try:
-                self.model_manager = TTSModelManager(self.config.model_repo)
+                self.model_manager = TTSModelManager(self.config.model_repo, device=self.config.device)
                 # 延迟加载模型，第一次使用时再加载
             except Exception as e:
                 logger.error(f"Failed to create model manager: {e}")
@@ -256,7 +256,7 @@ class TTSAPI:
                 self.model_manager.reload_model(request.model_name)
             else:
                 self.config.model_repo = request.model_name
-                self.model_manager = TTSModelManager(request.model_name)
+                self.model_manager = TTSModelManager(request.model_name, device=self.config.device)
             
             return StatusResponse(
                 status="ok",

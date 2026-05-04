@@ -25,8 +25,8 @@ if LOCAL_VOXCPM_PATH.exists():
 class VoxCPMAdapter(BaseTTSAdapter):
     """VoxCPM TTS适配器"""
     
-    def __init__(self, model_repo: str):
-        super().__init__(model_repo)
+    def __init__(self, model_repo: str, device: str = "auto"):
+        super().__init__(model_repo, device=device)
         self.generation_config = {}
         self.sample_rate = 48000  # VoxCPM2默认48kHz，加载后从模型获取
         self._voxcpm_instance = None  # 保存VoxCPM实例引用
@@ -62,8 +62,8 @@ class VoxCPMAdapter(BaseTTSAdapter):
             # 延迟导入VoxCPM，避免静态分析错误
             VoxCPM = self._import_voxcpm()
             
-            # 设置设备
-            device = "cuda" if torch.cuda.is_available() else "cpu"
+            # 使用配置的设备
+            device = self.device
             
             print(f"Loading VoxCPM model from {self.model_repo}...")
             

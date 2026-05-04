@@ -105,6 +105,30 @@ LONGCAT_LANGUAGES = {
     "zh": "Chinese",
 }
 
+# MOSS-TTS 支持的语言（20种）
+# 来源: systems/MOSS-TTS/README.md
+MOSS_TTS_LANGUAGES = {
+    "zh": "Chinese",
+    "en": "English",
+    "de": "German",
+    "es": "Spanish",
+    "fr": "French",
+    "ja": "Japanese",
+    "it": "Italian",
+    "hu": "Hungarian",
+    "ko": "Korean",
+    "ru": "Russian",
+    "fa": "Persian",
+    "ar": "Arabic",
+    "pl": "Polish",
+    "pt": "Portuguese",
+    "cs": "Czech",
+    "da": "Danish",
+    "sv": "Swedish",
+    "el": "Greek",
+    "tr": "Turkish",
+}
+
 # VoxCPM支持的语言
 # VoxCPM2支持30种语言，V1.5/0.5B仅支持中英双语
 VOXCPM_LANGUAGES = {

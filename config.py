@@ -1,5 +1,6 @@
 import argparse
 import os
+import torch
 from pathlib import Path
 from typing import Optional, Dict, Any
 from dataclasses import dataclass, field
@@ -14,6 +15,7 @@ class AppConfig:
     port: int
     log_level: str
     log_file: Optional[Path] = None
+    device: str = "auto"
     
     # Framework detection
     framework: str = field(init=False)
@@ -36,7 +38,7 @@ class AppConfig:
             repo: 模型仓库名称或路径
             
         Returns:
-            str: 框架类型 ("voxcpm", "omnivoice" 或 "longcat")
+            str: 框架类型 ("voxcpm", "omnivoice", "longcat" 或 "mosstts")
         """
         repo_lower = repo.lower()
         
@@ -51,6 +53,10 @@ class AppConfig:
         # 检查OmniVoice模式
         if any(keyword in repo_lower for keyword in ["omnivoice", "k2-fsa"]):
             return "omnivoice"
+        
+        # 检查MOSS-TTS模式（排除MOSS-TTS-Nano）
+        if any(keyword in repo_lower for keyword in ["moss-tts", "mosstts", "moss"]) and "nano" not in repo_lower:
+            return "mosstts"
         
         # 默认使用VoxCPM（目前最新/活跃的框架）
         return "voxcpm"
@@ -100,6 +106,15 @@ def parse_args() -> argparse.Namespace:
         help="Server port"
     )
     
+    # Device configuration
+    parser.add_argument(
+        "--device",
+        type=str,
+        default="auto",
+        choices=["auto", "cpu", "cuda"],
+        help="Device to run the model on (auto, cpu, or cuda)"
+    )
+    
     # Logging configuration
     parser.add_argument(
         "--log-level",
@@ -136,7 +151,8 @@ def create_config_from_args(args: argparse.Namespace) -> AppConfig:
         host=args.host,
         port=args.port,
         log_level=args.log_level,
-        log_file=args.log_file
+        log_file=args.log_file,
+        device=args.device
     )
 
 
